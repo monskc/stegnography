@@ -17,7 +17,7 @@ def encode_image(image_path, secret_message, key, output_image_path):
     img = img.convert('RGB')
     pixels = list(img.getdata())
 
-    # Add delimiter '~' to mark end of message
+    # Add terminator to encrypted message
     encrypted = xor_encrypt_decrypt(secret_message + '~', key)
     binary_data = text_to_bin(encrypted)
 
@@ -56,25 +56,22 @@ def decode_image(image_path, key):
         for channel in pixel:
             binary_data += str(channel & 1)
 
-    # Split binary into bytes and convert to chars
+    # Convert binary to encrypted characters
     binary_chars = [binary_data[i:i+8] for i in range(0, len(binary_data), 8)]
-    extracted = ''
+    encrypted = ''
     for byte in binary_chars:
         if len(byte) < 8:
             continue
-        char = chr(int(byte, 2))
-        extracted += char
-        if extracted.endswith('~'):  # end marker
-            break
+        encrypted += chr(int(byte, 2))
 
-    # Remove delimiter and decrypt
-    if not extracted.endswith('~'):
-        print("❌ No hidden message found.")
+    # Now decrypt
+    decrypted = xor_encrypt_decrypt(encrypted, key)
+
+    # Look for end marker
+    if '~' in decrypted:
+        return decrypted.split('~')[0]
+    else:
         return None
-
-    extracted = extracted[:-1]
-    decrypted = xor_encrypt_decrypt(extracted, key)
-    return decrypted
 
 # --- Main Program ---
 def main():
@@ -101,7 +98,7 @@ def main():
         if message is not None:
             print(f"[✔] Decrypted message: {message}")
         else:
-            print("Failed to decrypt message or no hidden message found.")
+            print("❌ Failed to decrypt message or no hidden message found.")
 
     else:
         print("Invalid operation. Choose 'encrypt' or 'decrypt'.")
