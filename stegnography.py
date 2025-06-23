@@ -75,9 +75,10 @@ def decode_image(image_path, key):
 
 # --- Main Program ---
 def main():
-    mode = input("Choose operation (encrypt/decrypt): ").strip().lower()
+    print("1. Encrypt\n2. Decrypt")
+    choice = input("Choose operation (1/2): ").strip()
 
-    if mode == "encrypt":
+    if choice == "1":
         image_path = input("Enter input PNG image path: ").strip()
         secret_message = input("Enter secret message to hide: ")
         key = input("Enter encryption key: ")
@@ -90,7 +91,7 @@ def main():
         if not success:
             print("Encryption failed.")
 
-    elif mode == "decrypt":
+    elif choice == "2":
         image_path = input("Enter PNG image path to decode: ").strip()
         key = input("Enter decryption key: ")
 
@@ -101,7 +102,7 @@ def main():
             print("❌ Failed to decrypt message or no hidden message found.")
 
     else:
-        print("Invalid operation. Choose 'encrypt' or 'decrypt'.")
+        print("Invalid choice. Please select 1 or 2.")
 
 if __name__ == "__main__":
     main()
